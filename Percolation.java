@@ -27,11 +27,11 @@ public class Percolation {
     unionFind = new WeightedQuickUnionUF(n*n + 2);
     openSites = 0;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i <= n; i++) {
       unionFind.union(0, i);
     }
-    for (int i = n*n-n+1; i < n*2+1; i++) {
-      unionFind.union(n*n-n+1, i);
+    for (int i = n*n-n+1; i < n*n+1; i++) {
+      unionFind.union(n*n + 1, i);
     }
 
     for (int row = 0; row < n; row++) {
@@ -49,30 +49,31 @@ public class Percolation {
 
     int unionFindIndex = xyTo1D(row, col);
     int nSquared = this.n*this.n;
-    // only proceed if unionFindIndex is not connected to virtual nodes
+    // only proceed if unionFindIndex is not connected to virtual nodes (if there was a unionFind for OPEN SITES)
     // if (something)
     //   return
 
     grid[row][col] = 1;
 
-    // no need to check if they are connected. union method does that.
+    // No need to check if they are connected. union method does that.
+    // Only connect in unionFind if neighbor is already open.
     // top neighbor
-    if (unionFindIndex - this.n >= 0) { // check if already connected?
+    if (unionFindIndex - this.n >= 0  && row-1 >= 0 && grid[row-1][col] == 1) {
       unionFind.union(unionFindIndex, unionFindIndex - this.n);
     }
 
     // bottom neighbor
-    if (unionFindIndex + this.n < nSquared) {
+    if (unionFindIndex + this.n < nSquared && row+1 < this.n && grid[row+1][col] == 1) {
       unionFind.union(unionFindIndex, unionFindIndex + this.n);
     }
 
     // left neighbor
-    if (unionFindIndex - 1 >= 0) { // maybe not 0, maybe 1
+    if (unionFindIndex - 1 >= 0 && col-1 >= 0 && grid[row][col-1] == 1) { // maybe not 0, maybe 1
       unionFind.union(unionFindIndex, unionFindIndex - 1);
     }
 
     // right neighbor
-    if (unionFindIndex + 1 < nSquared) { // maybe not 0, maybe 1
+    if (unionFindIndex + 1 < nSquared && col+1 < n && grid[row][col+1] == 1) { // maybe not 0, maybe 1
       unionFind.union(unionFindIndex, unionFindIndex + 1);
     }
   }
@@ -92,8 +93,12 @@ public class Percolation {
     validate(row, col);
     int unionFindIndex = xyTo1D(row, col);
 
+    if (unionFind.find(0) == unionFind.find(unionFindIndex) && grid[row][col] == 1) {
+      System.out.printf("IS FULL (%d, %d):%d\n", row, col, unionFindIndex);
+    }
+
     // is this site connected to the top row/upper virtual node?
-    return unionFind.find(0) == unionFind.find(unionFindIndex) && grid[row][col] == 1;
+    return (unionFind.find(0) == unionFind.find(unionFindIndex)) && (grid[row][col] == 1);
   }
 
   // returns the number of open sites
@@ -109,7 +114,7 @@ public class Percolation {
 
   // converts virtual grid coordinates to union find index
   private int xyTo1D(int y, int x) {
-    return y*this.n + x;
+    return y*this.n + x + 1;
   }
 
   // validates virtual grid coordinates
