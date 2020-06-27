@@ -22,7 +22,7 @@ public class PercolationStats {
     }
 
     this.n = n;
-    // this.trials = trials;
+    this.trials = trials;
     this.percolationThreshold = new double[trials];
     Percolation percolation;
 
@@ -63,12 +63,12 @@ public class PercolationStats {
 
   // low endpoint of 95% confidence interval
   public double confidenceLo() {
-    return 0.0;
+    return mean() - 1.96*stddev()/Math.sqrt(trials);
   }
 
   // high endpoint of 95% confidence interval
   public double confidenceHi() {
-    return 0.0;
+    return mean() + 1.96*stddev()/Math.sqrt(trials);
   }
 
   // test client (see below)
