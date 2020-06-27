@@ -93,10 +93,6 @@ public class Percolation {
     validate(row, col);
     int unionFindIndex = xyTo1D(row, col);
 
-    if (unionFind.find(0) == unionFind.find(unionFindIndex) && grid[row][col] == 1) {
-      System.out.printf("IS FULL (%d, %d):%d\n", row, col, unionFindIndex);
-    }
-
     // is this site connected to the top row/upper virtual node?
     return (unionFind.find(0) == unionFind.find(unionFindIndex)) && (grid[row][col] == 1);
   }
