@@ -45,15 +45,16 @@ public class Percolation {
   public void open(int row, int col) {
     validate(row, col);
 
-    openSites++;
-
     int unionFindIndex = xyTo1D(row, col);
     int nSquared = this.n*this.n;
     // only proceed if unionFindIndex is not connected to virtual nodes (if there was a unionFind for OPEN SITES)
     // if (something)
     //   return
 
-    grid[row][col] = 1;
+    if (grid[row][col] == 0) {
+      openSites++;
+      grid[row][col] = 1;
+    }
 
     // No need to check if they are connected. union method does that.
     // Only connect in unionFind if neighbor is already open.
@@ -91,10 +92,13 @@ public class Percolation {
   // is the site (row, col) full?
   public boolean isFull(int row, int col) {
     validate(row, col);
+    // int fullNeighbors = 0;
     int unionFindIndex = xyTo1D(row, col);
+    boolean isConnectedToTopVirtualNode =
+      (unionFind.find(0) == unionFind.find(unionFindIndex))
+      && (grid[row][col] == 1);
 
-    // is this site connected to the top row/upper virtual node?
-    return (unionFind.find(0) == unionFind.find(unionFindIndex)) && (grid[row][col] == 1);
+    return isConnectedToTopVirtualNode;
   }
 
   // returns the number of open sites
