@@ -12,8 +12,10 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
   private int n; // virtual? grid height and width.
   private int openSites; // number open sites.
-  private int[][] grid; // N-by-N grid
-  private WeightedQuickUnionUF unionFind; // disjoint set representing the connection in the N-by-N grid.
+  private boolean[][] grid; // N-by-N grid
+  private WeightedQuickUnionUF unionFind; // disjoint set representing the
+                                          // connection in the N-by-N grid.
+  // private WeightedQuickUnionUF unionFindOpenSites // ?
 
   // creates n-by-n grid, with all sites initially blocked
   public Percolation(int n) {
@@ -23,7 +25,7 @@ public class Percolation {
 
     // maybe this.n is not needed because we have grid[][]
     this.n = n;
-    grid = new int[n][n];
+    grid = new boolean[n][n];
     unionFind = new WeightedQuickUnionUF(n*n + 2);
     openSites = 0;
 
@@ -36,7 +38,7 @@ public class Percolation {
 
     for (int row = 0; row < n; row++) {
       for (int col = 0; col < n; col++) {
-        grid[row][col] = 0;
+        grid[row][col] = false;
       }
     }
   }
@@ -47,34 +49,35 @@ public class Percolation {
 
     int unionFindIndex = xyTo1D(row, col);
     int nSquared = this.n*this.n;
-    // only proceed if unionFindIndex is not connected to virtual nodes (if there was a unionFind for OPEN SITES)
+    // only proceed if unionFindIndex is not connected to virtual nodes
+    // (if there was a unionFind for OPEN SITES)
     // if (something)
     //   return
 
-    if (grid[row][col] == 0) {
+    if (!grid[row][col]) {
       openSites++;
-      grid[row][col] = 1;
+      grid[row][col] = true;
     }
 
     // No need to check if they are connected. union method does that.
     // Only connect in unionFind if neighbor is already open.
     // top neighbor
-    if (unionFindIndex - this.n >= 0  && row-1 >= 0 && grid[row-1][col] == 1) {
+    if (unionFindIndex - this.n >= 0  && row-1 >= 0 && grid[row-1][col]) {
       unionFind.union(unionFindIndex, unionFindIndex - this.n);
     }
 
     // bottom neighbor
-    if (unionFindIndex + this.n < nSquared && row+1 < this.n && grid[row+1][col] == 1) {
+    if (unionFindIndex + this.n < nSquared && row+1 < this.n && grid[row+1][col]) {
       unionFind.union(unionFindIndex, unionFindIndex + this.n);
     }
 
     // left neighbor
-    if (unionFindIndex - 1 >= 0 && col-1 >= 0 && grid[row][col-1] == 1) { // maybe not 0, maybe 1
+    if (unionFindIndex - 1 >= 0 && col-1 >= 0 && grid[row][col-1]) {
       unionFind.union(unionFindIndex, unionFindIndex - 1);
     }
 
     // right neighbor
-    if (unionFindIndex + 1 < nSquared && col+1 < n && grid[row][col+1] == 1) { // maybe not 0, maybe 1
+    if (unionFindIndex + 1 < nSquared && col+1 < n && grid[row][col+1]) {
       unionFind.union(unionFindIndex, unionFindIndex + 1);
     }
   }
@@ -86,7 +89,7 @@ public class Percolation {
     // is the site connected to the top or bottom row?
     // yes => true
 //    return true;
-    return grid[row][col] == 1;
+    return grid[row][col];
   }
 
   // is the site (row, col) full?
@@ -96,7 +99,7 @@ public class Percolation {
     int unionFindIndex = xyTo1D(row, col);
     boolean isConnectedToTopVirtualNode =
       (unionFind.find(0) == unionFind.find(unionFindIndex))
-      && (grid[row][col] == 1);
+      && (grid[row][col]);
 
     return isConnectedToTopVirtualNode;
   }
@@ -117,15 +120,15 @@ public class Percolation {
     return y*this.n + x + 1;
   }
 
-  // validates virtual grid coordinates
+  // validates grid coordinates
   private void validate(int row, int col) {
-    if (!(0 <= row && row < this.n) || !(0 <= col && col < this.n) )
-      throw new IllegalArgumentException("row or column indices are out of range");
+    if (!(0 <= row && row < this.n) || !(0 <= col && col < this.n))
+      throw new IllegalArgumentException("Row or column indices are out of range");
   }
 
   // test client (optional)
-  public static void main(String[] args) {
-    Percolation p = new Percolation(5);
-    System.out.println(p.isOpen(0, 0));
-  }
+  // public static void main(String[] args) {
+    // Percolation p = new Percolation(5);
+    // System.out.println(p.isOpen(0, 0));
+  // }
 }
