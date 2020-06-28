@@ -35,6 +35,7 @@ public class PercolationStats {
     }
   }
 
+  // experiment
   private void executeExperiment(Percolation percolation) {
     int randomRow = StdRandom.uniform(n);
     int randomCol = StdRandom.uniform(n);
@@ -43,8 +44,8 @@ public class PercolationStats {
     // Open the site.
 
     while (!percolation.percolates()) {
-      randomRow = StdRandom.uniform(n);
-      randomCol = StdRandom.uniform(n);
+      randomRow = StdRandom.uniform(n)+1;
+      randomCol = StdRandom.uniform(n)+1;
 
       if (!percolation.isOpen(randomRow, randomCol))
         percolation.open(randomRow, randomCol);
