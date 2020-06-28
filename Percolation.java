@@ -46,6 +46,8 @@ public class Percolation {
   // opens the site (row, col) if it is not open already
   public void open(int row, int col) {
     validate(row, col);
+    row--;
+    col--;
 
     int unionFindIndex = xyTo1D(row, col);
     int nSquared = this.n*this.n;
@@ -89,6 +91,8 @@ public class Percolation {
     // is the site connected to the top or bottom row?
     // yes => true
 //    return true;
+    row--;
+    col--;
     return grid[row][col];
   }
 
@@ -96,7 +100,10 @@ public class Percolation {
   public boolean isFull(int row, int col) {
     validate(row, col);
     // int fullNeighbors = 0;
+    row--;
+    col--;
     int unionFindIndex = xyTo1D(row, col);
+
     boolean isConnectedToTopVirtualNode =
       (unionFind.find(0) == unionFind.find(unionFindIndex))
       && (grid[row][col]);
@@ -122,8 +129,9 @@ public class Percolation {
 
   // validates grid coordinates
   private void validate(int row, int col) {
-    if (!(0 <= row && row < this.n) || !(0 <= col && col < this.n))
-      throw new IllegalArgumentException("Row or column indices are out of range");
+    if (!(0 < row && row <= this.n) || !(0 < col && col <= this.n))
+      throw new IllegalArgumentException(
+        "Row or column indices are out of range [1,"+this.n+"]");
   }
 
   // test client (optional)
