@@ -61,10 +61,9 @@ public class Percolation {
       grid[row][col] = true;
     }
 
-    // No need to check if they are connected. union method does that.
     // Only connect in unionFind if neighbor is already open.
     // top neighbor
-    if (unionFindIndex - this.n >= 0  && row-1 >= 0 && grid[row-1][col]) {
+    if (unionFindIndex - this.n >= 0 && row-1 >= 0 && grid[row-1][col]) {
       unionFind.union(unionFindIndex, unionFindIndex - this.n);
     }
 
@@ -103,10 +102,17 @@ public class Percolation {
     row--;
     col--;
     int unionFindIndex = xyTo1D(row, col);
-
+    // boolean hasAtLeastOneFullNeighbor = false; // count full neighbors around
+    // (row,col). if there's is more than one, it is def full.
     boolean isConnectedToTopVirtualNode =
       (unionFind.find(0) == unionFind.find(unionFindIndex))
       && (grid[row][col]);
+
+    // top neighbor
+    // if (unionFindIndex - this.n >= 0 && row-1 >= 0 && grid[row-1][col]
+    // && unionFind.find(0) == unionFind.find(unionFindIndex-this.n)) {
+    //   hasAtLeastOneFullNeighbor = true;
+    // }
 
     return isConnectedToTopVirtualNode;
   }
